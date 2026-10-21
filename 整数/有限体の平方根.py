@@ -1,0 +1,45 @@
+"""有限体 F_p での平方根 (Tonelli-Shanks)。
+
+使用例:
+    square_root(2, 7)  # 3 または 4 (3^2=9≡2)
+"""
+import random
+
+random.seed()
+
+
+def square_root(n, p):
+    """n の mod p における平方根のひとつを返す。平方非剰余なら -1。
+
+    n: 整数
+    p: 奇素数
+    計算量: O(log^2 p) 程度
+    """
+    n %= p
+    if n == 0:
+        return 0
+    if pow(n, (p - 1) >> 1, p) != 1:
+        return -1
+    q = p - 1
+    m = 0
+    while q & 1 == 0:
+        q >>= 1
+        m += 1
+    z = random.randint(1, p - 1)
+    while pow(z, (p - 1) >> 1, p) == 1:
+        z = random.randint(1, p - 1)
+    c = pow(z, q, p)
+    t = pow(n, q, p)
+    r = pow(n, (q + 1) >> 1, p)
+    if t == 0:
+        return 0
+    m -= 2
+    while t != 1:
+        while pow(t, 2 ** m, p) == 1:
+            c = c * c % p
+            m -= 1
+        r = r * c % p
+        c = c * c % p
+        t = t * c % p
+        m -= 1
+    return r
